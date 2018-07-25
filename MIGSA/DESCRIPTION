@@ -1,0 +1,50 @@
+Package: MIGSA
+Type: Package
+Title: Massive and Integrative Gene Set Analysis
+Version: 1.4.0
+Date: 2016-03-02
+Author: Juan C. Rodriguez, Cristobal Fresno, Andrea S. Llera and Elmer A. 
+    Fernandez
+Maintainer: Juan C. Rodriguez <jcrodriguez@bdmg.com.ar>
+Description: Massive and Integrative Gene Set Analysis.
+    The MIGSA package allows to perform a massive and integrative gene set 
+    analysis over several expression and gene sets simultaneously. It provides 
+    a common gene expression analytic framework that grants a comprehensive 
+    and coherent analysis. Only a minimal user parameter setting is required 
+    to perform both singular and gene set enrichment analyses in an 
+    integrative manner by means of the best available methods, i.e. dEnricher 
+    and mGSZ respectively.
+    The greatest strengths of this big omics data tool are the availability of 
+    several functions to explore, analyze and visualize its results in order 
+    to facilitate the data mining task over huge information sources.
+    MIGSA package also provides several functions that allow to easily load 
+    the most updated gene sets from several repositories.
+URL: http://www.bdmg.com.ar/
+biocViews: Software, GeneSetEnrichment, Visualization, GeneExpression,
+        Microarray, RNASeq, KEGG
+License: GPL (>= 2)
+Depends: R (>= 3.4), methods, BiocGenerics
+Suggests: breastCancerMAINZ, breastCancerNKI, breastCancerTRANSBIG,
+        breastCancerUNT, breastCancerUPP, breastCancerVDX, mGSZ, pbcmc,
+        MIGSAdata
+Imports: AnnotationDbi, Biobase, BiocParallel, compiler, data.table,
+        edgeR, futile.logger, ggdendro, ggplot2, GO.db, GOstats, graph,
+        graphics, grDevices, grid, GSEABase, ismev, limma, matrixStats,
+        org.Hs.eg.db, RBGL, reshape2, Rgraphviz, RJSONIO, stats, utils,
+        vegan
+Collate: 'GenesetRes.R' 'GSEAres.R' 'SEAres.R' 'SEAparams-class.R'
+        'SEAparams.R' 'FitOptions-class.R' 'ExprData-class.R'
+        'Genesets.R' 'GSEAparams-class.R' 'GSEAparams.R'
+        'IGSAinput-class.R' 'IGSAinput.R' 'FitOptions.R' 'DEnricher.R'
+        'Genesets-asGenesets.R' 'Genesets-enrichr.R'
+        'Genesets-geneSetsFromFile.R' 'Genesets-loadGo.R'
+        'GenesetsRes.R' 'GoAnalysis.R' 'MGSZ.R' 'IGSAres.R'
+        'IGSAinput-getterSetters.R' 'IGSA.R' 'IGSAinput-getDEGenes.R'
+        'MIGSAres-class.R' 'MIGSA.R' 'MIGSAPackage.R' 'MIGSAmGSZ.R'
+        'MIGSAmultiplot.R' 'MIGSAres.R' 'MIGSAres-GoAnalysis.R'
+        'MIGSAres-common.R' 'MIGSAres-setEnrCutoff.R'
+        'MIGSAres-genesManipulation.R' 'MIGSAres-getAdditionalInfo.R'
+        'MIGSAres-plotting.R' 'data-bcMigsaRes.R' 'data-migsaRes.R'
+        'summaryFunctions.R'
+NeedsCompilation: no
+Packaged: 2018-05-01 01:23:45 UTC; biocbuild

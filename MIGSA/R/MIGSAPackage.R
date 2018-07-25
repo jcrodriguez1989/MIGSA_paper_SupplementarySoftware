@@ -1,0 +1,33 @@
+#'MIGSA package
+#'
+#'The MIGSA package allows to perform a massive and integrative gene set 
+#'analysis over several expression and gene sets simultaneously. It provides a 
+#'common gene expression analytic framework that grants a comprehensive and 
+#'coherent analysis. Only a minimal user parameter setting is required to 
+#'perform both singular and gene set enrichment analyses in an integrative 
+#'manner by means of the best available methods, i.e. dEnricher and mGSZ
+#'respectively.
+#'The greatest strengths of this big omics data tool are the availability of 
+#'several functions to explore, analyze and visualize its results in order to 
+#'facilitate the data mining task over huge information sources.
+#'MIGSA package also provides several functions that allow to easily load the 
+#'most updated gene sets from several repositories.
+#'
+#'@docType package
+#'@name MIGSAPackage
+#'@author Juan C. Rodriguez \email{jcrodriguez@@bdmg.com.ar}, Cristobal Fresno 
+#'\email{cfresno@@bdmg.com.ar}, Andrea S. Llera \email{allera@@leloir.org.ar} 
+#'and Elmer A. Fernandez \email{efernandez@@bdmg.com.ar}
+#'@keywords Functional Analysis
+#'@references
+#'\enumerate{
+#'\item Rodriguez, J. C., Gonzalez, G. A., Fresno, C., Llera, A. S., & 
+#'Fernandez, E. A. (2016). Improving information retrieval in functional 
+#'analysis. Computers in Biology and Medicine, 79, 10-20.
+#'}
+#'@import methods
+#'@import BiocGenerics
+NULL
+# #'@return inDevelopment this value will be used in other R files to check 
+# #'wether if we are in development or production.
+# inDevelopment <- FALSE;

@@ -1,0 +1,153 @@
+\pdfminorversion=4 % tell pdflatex to generate PDF in version 1.4
+\documentclass[article, shortnames, nojss]{jss}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{enumerate}
+\usepackage{multirow}
+\DeclareMathOperator*{\argmax}{arg\,max}
+% \VignetteIndexEntry{Getting pbcmc datasets}
+% \VignetteKeyword{singular enrichment analysis}
+% \VignetteKeyword{over representation analysis}
+% \VignetteKeyword{gene set enrichment analysis}
+% \VignetteKeyword{functional class scoring}
+% \VignetteKeyword{big omics data}
+
+% \VignetteDepends{breastCancerMAINZ}
+% \VignetteDepends{breastCancerNKI}
+% \VignetteDepends{breastCancerTRANSBIG}
+% \VignetteDepends{breastCancerUNT}
+% \VignetteDepends{breastCancerUPP}
+% \VignetteDepends{breastCancerVDX}
+% \VignetteDepends{limma}
+% \VignetteDepends{MIGSA}
+% \VignetteDepends{MIGSAdata}
+% \VignetteDepends{pbcmc}
+
+\author{Juan C Rodriguez\\CONICET\\Universidad Cat\'{o}lica de C\'{o}rdoba\\
+Universidad Nacional de C\'{o}rdoba
+\And Crist\'{o}bal Fresno\\Instituto Nacional de Medicina Gen\'{o}mica
+\AND Andrea S Llera\\CONICET\\Fundaci\'{o}n Instituto 
+Leloir \And Elmer A Fern\'{a}ndez\\CONICET\\Universidad Cat\'{o}lica de
+C\'{o}rdoba\\Universidad Nacional de C\'{o}rdoba}
+
+\title{\pkg{MIGSA}: Getting pbcmc datasets}
+
+%% for pretty printing and a nice hypersummary also set:
+%% comma-separated
+\Plainauthor{Juan C Rodriguez, Crist\'{o}bal Fresno, Andrea S Llera, Elmer A 
+    Fern\'{a}ndez}
+%% without formatting
+\Plaintitle{MIGSA: Getting pbcmc datasets}
+%% a short title (if necessary)
+\Shorttitle{\pkg{MIGSA}: Getting pbcmc datasets}
+
+%% an abstract and keywords
+\Abstract{
+In this vignette we are going to show how we got the RData 
+\textit{pbcmcData.RData} which can be loaded via the \pkg{MIGSAdata} package 
+using data(pbcmcData).
+}
+\Keywords{singular enrichment analysis, over representation analysis, gene set 
+enrichment analysis, functional class scoring, big omics data}
+
+%% without formatting
+\Plainkeywords{singular enrichment analysis, over representation analysis, 
+gene set enrichment analysis, functional class scoring, big omics data}
+%% at least one keyword must be supplied 
+
+%% The address of (at least) one author should be given  
+%% in the following format:
+\Address{
+Juan C Rodriguez \& Elmer A Fern\'{a}ndez\\
+Bioscience Data Mining Group\\ 
+Facultad de Ingenier\'{i}a\\ 
+Universidad Cat\'{o}lica de C\'{o}rdoba - CONICET\\ 
+X5016DHK C\'{o}rdoba, Argentina\\ 
+E-mail: \email{jcrodriguez@bdmg.com.ar, efernandez@bdmg.com.ar}\\
+URL: \url{http://www.bdmg.com.ar/}\\
+}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+% \SweaveOpts{concordance=FALSE}
+
+\section{Getting the data}
+Following we give the used code to download this data and their PAM50 subtypes.
+
+<<gettingData, eval=TRUE>>=
+library(limma);
+library(pbcmc);
+
+# datasets included in BioConductor repository
+libNames <- c("mainz", "nki", "transbig", "unt", "upp", "vdx");
+
+# let's load them!
+pbcmcData <- lapply(libNames, function(actLibName) {
+    print(actLibName);
+    
+    # the pbcmc package provides an easy way to download and classify them
+    actLib <- loadBCDataset(Class=PAM50, libname=actLibName, verbose=FALSE);
+    actLibFilt <- filtrate(actLib, verbose=FALSE);
+    actLibFilt <- classify(actLibFilt, std="none", verbose=FALSE);
+    actSubtypes <- classification(actLibFilt)$subtype;
+    
+    # get the expression matrix and the annotation
+    actExprs <- exprs(actLib);
+    actAnnot <- annotation(actLib);
+    
+    # we recommend working allways with Entrez IDs, let's match them with 
+    # expression matrix rownames (and modify them)
+    if (all(actAnnot$probe == rownames(actExprs))) {
+        actExprs <- actExprs[!is.na(actAnnot$EntrezGene.ID),];
+        actAnnot <- actAnnot[!is.na(actAnnot$EntrezGene.ID),];
+        rownames(actExprs) <- as.character(actAnnot$EntrezGene.ID);
+    } else {
+        matchedEntrez <- match(rownames(actExprs), actAnnot$probe);
+        # all(rownames(actExprs) %in% actAnnot$probe == !is.na(matchedEntrez));
+        
+        stopifnot(all(
+            actAnnot$probe[!is.na(matchedEntrez)] ==
+            rownames(actExprs)[!is.na(matchedEntrez)]));
+        
+        actExprs <- actExprs[!is.na(matchedEntrez),];
+        actAnnot <- actAnnot[!is.na(matchedEntrez),];
+        stopifnot(all(actAnnot$probe == rownames(actExprs)));
+        actExprs <- actExprs[!is.na(actAnnot$EntrezGene.ID),];
+        actAnnot <- actAnnot[!is.na(actAnnot$EntrezGene.ID),];
+        rownames(actExprs) <- as.character(actAnnot$EntrezGene.ID);
+    }
+    
+    # average repeated genes expression
+    actExprs <- avereps(actExprs);
+    
+    stopifnot(all(colnames(actExprs) == names(actSubtypes)));
+    # filtrate only these two conditions
+    actExprs <- actExprs[, actSubtypes %in% c("Basal", "LumA")];
+    actSubtypes <- as.character(
+        actSubtypes[actSubtypes %in% c("Basal", "LumA")]);
+    
+    return(list(geneExpr=actExprs, subtypes=actSubtypes));
+})
+names(pbcmcData) <- libNames;
+@
+
+And let's check it is the same data.
+<<validateData, eval=TRUE>>=
+# save the just created pbcmcData to newPbcmcData
+newPbcmcData <- pbcmcData;
+
+library(MIGSAdata);
+
+# and load the MIGSAdata one.
+data(pbcmcData);
+all.equal(newPbcmcData, pbcmcData);
+@
+
+\section*{Session Info}
+<<Session Info, echo=true>>=
+sessionInfo()
+@
+
+% \bibliography{MIGSA}
+
+\end{document}
