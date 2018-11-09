@@ -2,7 +2,7 @@
 # R
 # stopifnot(R.Version()$version.string ==
 #     'R Under development (unstable) (2017-12-13 r73907)');
-setwd('~/NatureMIGSA/'); # or any directory where Supplementary Data was downloaded to
+setwd('~/MIGSAdata/'); # or any directory where Supplementary Data was downloaded to
 
 library('GO.db');
 library('MIGSA');
@@ -64,11 +64,11 @@ subtypes <- unique(unlist(categories[3:4]));
 categories$cond1 <- factor(categories$cond1);
 categories$cond2 <- factor(categories$cond2);
 
-## Fig. 1
+## Fig. 2
 pdf('migsaHKresHeatmap.pdf');
-aa <- migsaHeatmap(migsaHKres, categories=categories, categLabels=F);
+aa <- migsaHeatmap(migsaHKres, categories=categories, categLabels=F)
 dev.off();
-## Supplementary File 1 EGS
+## Supplementary File 1 EGSs
 invisible(toCsv(aa$data, 'MigsaHk_EGS.csv'));
 
 # lets get important enriching genes for each experiment
@@ -107,12 +107,12 @@ migsaHKresIEG <- do.call(cbind, lapply(migsaHKresIEG, function(actHKGenes) {
 rownames(migsaHKresIEG) <- sub('.*?_', '', sub('.*?_', '', rownames(migsaHKresIEG)));
 migsaHKresIEG <- migsaHKresIEG[rownames(aa$data),];
 stopifnot(all(rownames(aa$data) == rownames(migsaHKresIEG)));
-## Supplementary File 1 IEG
+## Supplementary File 1 IEGs
 invisible(toCsv(migsaHKresIEG, 'MigsaHk_IEG.csv'));
 
 
 # heatmap per each subtype. if > 50% of enriched datasets
-library('VennDiagram');
+# library('VennDiagram');
 
 stypestable <- data.frame(short=subtypes,
                         long=c('Basal-like', 'Luminal B', 'Her2-enriched', 'Luminal A'),
@@ -120,7 +120,7 @@ stypestable <- data.frame(short=subtypes,
 rownames(stypestable) <- stypestable$short;
 percEnr <- 0; # 0 to 100
 consPerc <- 0.5; # 0 to 1
-## Supplementary Figs. 1-8
+## Supplementary Figs. 1-4
 pdf('migsaHKresHeatmap_perSubtype.pdf');
 stypeGSetsFull <- lapply(subtypes, function(actStype) {
 #     actStype <- 'Ba';
@@ -156,9 +156,9 @@ stypeGSetsFull <- lapply(subtypes, function(actStype) {
     names(enriched2Venn) <- stypestable[names(enriched), 'long'];
     cols <- as.character(stypestable[names(enriched), 'color']);
     
-    tmp <- venn.diagram(enriched2Venn, filename=NULL, fill=cols, main=stypestable[actStype, 'long']);
-    grid.newpage();
-    grid.draw(tmp);
+#     tmp <- venn.diagram(enriched2Venn, filename=NULL, fill=cols, main=stypestable[actStype, 'long']);
+#     grid.newpage();
+#     grid.draw(tmp);
     
     return(enriched); # return total intersection
 });
@@ -175,7 +175,7 @@ CCET_EGS <- apply(contrasts, 2, function(actCtrst) {
 })
 colnames(CCET_EGS) <- apply(contrasts, 2, paste, collapse=' Vs ');
 # lets save it as csv
-## Supplementary File 2 EGS
+## Supplementary File 2 EGSs
 invisible(toCsv(CCET_EGS, 'CCET_EGS.csv'));
 
 # lets analyze the genes that are mostly enriching these gene sets
@@ -220,11 +220,14 @@ CCET_IEG <- do.call(cbind, lapply(CCET_IEG, function(actCtrstGenes) {
 rownames(CCET_IEG) <- sub('.*?_', '', sub('.*?_', '', rownames(CCET_IEG)));
 CCET_IEG <- CCET_IEG[rownames(CCET_EGS),];
 stopifnot(all(rownames(CCET_EGS) == rownames(CCET_IEG)));
-## Supplementary File 2 IEG
+## Supplementary File 2 IEGs
 invisible(toCsv(CCET_IEG, 'CCET_IEG.csv'));
 
 # File also given in Suppl Data
-saveRDS(list(EGs=stypeGSetsFull, IEGs=CCET_IEG), file='CCETs.xz', compress='xz');
+# saveRDS(list(EGs=stypeGSetsFull, IEGs=CCET_IEG), file='CCETs.xz', compress='xz');
+CCETs <- readRDS('CCETs.xz');
+stypeGSetsFull <- CCETs$EGs;
+CCET_IEG <- CCETs$IEGs;
 
 stypeGSets <- lapply(stypeGSetsFull, function(enriched) Reduce(intersect, enriched));
 names(stypeGSets) <- subtypes;
@@ -297,7 +300,7 @@ colSums(FTP_EGS[rowSums(FTP_EGS) == 1,]);
 # 103   1   7 395
 
 # lets save it as csv
-## Supplementary File 3 EGS
+## Supplementary File 3 EGSs
 invisible(toCsv(FTP_EGS, 'FTP_EGS.csv'));
 
 # lets analyze the genes that are mostly enriching these gene sets
@@ -324,7 +327,7 @@ colnames(FTP_IEG) <- subtypes;
 
 FTP_IEG <- FTP_IEG[rownames(FTP_EGS),];
 stopifnot(all(rownames(FTP_EGS) == rownames(FTP_IEG)));
-## Supplementary File 3 IEG
+## Supplementary File 3 IEGs
 invisible(toCsv(FTP_IEG, 'FTP_IEG.csv'));
 
 # plot the three big GO tree with all subtypes
@@ -368,7 +371,7 @@ legend <- matrix(
     'grey75'),
     nrow=2, byrow=!F);
 
-## Supplementary Figs. 9-11
+## Supplementary Figs. 5-7
 pdf('FTP_trees.pdf', height=14, width=14);
 invisible(lapply(c('BP', 'CC', 'MF'), function(ont) {
     plotInfo <- treeInfo[Ontology(rownames(treeInfo)) == ont, ];

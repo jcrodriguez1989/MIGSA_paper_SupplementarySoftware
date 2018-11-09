@@ -2,7 +2,7 @@
 # R
 # stopifnot(R.Version()$version.string ==
 #     'R Under development (unstable) (2017-12-13 r73907)');
-setwd('~/NatureMIGSA/'); # or any directory where Supplementary Data was downloaded to
+setwd('~/MIGSAdata/'); # or any directory where Supplementary Data was downloaded to
 
 library('edgeR');
 library('MIGSA');
@@ -22,6 +22,7 @@ stopifnot(all(colnames(geneExpr) == colnames(protExpr)));
 stopifnot(all(colnames(geneExpr) == colnames(rnaSeq)));
 stopifnot(all(colnames(geneExpr) == rownames(permSubtypes)));
 
+## Supplementary Table 1 (only TCGA subjects)
 table(permSubtypes$Permuted);
 #     Assigned Not Assigned    Ambiguous 
 #           68           15           14
@@ -190,7 +191,7 @@ stopifnot(length(allExperiments) == length(allExperimentsOK))
 
 # Now every experiment has its parameters to get between 4 and 6 percent of their genes DE
 
-## Supplementary: table SubjectsParams (only TCGA subjects)
+## Supplementary Table 2 (only TCGA subjects)
 allExperiments <- allExperimentsOK;
 aa <- do.call(rbind, lapply(allExperiments, summary)); aa[order(aa[,1]),];
 

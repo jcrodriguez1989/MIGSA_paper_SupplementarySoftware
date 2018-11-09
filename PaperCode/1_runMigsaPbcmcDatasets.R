@@ -2,7 +2,7 @@
 # R
 # stopifnot(R.Version()$version.string ==
 #     'R Under development (unstable) (2017-12-13 r73907)');
-setwd('~/NatureMIGSA/'); # or any directory where Supplementary Data was downloaded to
+setwd('~/MIGSAdata/'); # or any directory where Supplementary Data was downloaded to
 
 library('MIGSA');
 # set.seed(8818);
@@ -12,7 +12,7 @@ library('MIGSA');
 HaibeKains <- readRDS('HKdatasets.xz');
 
 # get the subtypes according to pbcmc supplementary material
-## Supplementary Table 1
+## Supplementary Table 1 (only HaibeKains subjects)
 HaibeKainsWPAM50 <- lapply(names(HaibeKains), function(actExp) {
 #     actExp <- names(HaibeKains)[[1]];
     actDs <- HaibeKains[[actExp]];

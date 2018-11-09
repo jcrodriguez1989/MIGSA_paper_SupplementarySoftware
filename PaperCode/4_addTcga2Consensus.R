@@ -2,7 +2,7 @@
 # R
 # stopifnot(R.Version()$version.string ==
 #     'R Under development (unstable) (2017-12-13 r73907)');
-setwd('~/NatureMIGSA/'); # or any directory where Supplementary Data was downloaded to
+setwd('~/MIGSAdata/'); # or any directory where Supplementary Data was downloaded to
 
 library('MIGSA');
 library('AnnotationDbi');
@@ -142,19 +142,12 @@ cond2[which(ctrst==paste0(c1,c2))[[1]]] <- c2;
 
 wtcgaCateg <- list(istcga, tech, ctrst, cond2, cond1);
 
-## Fig. 2
+## Fig. 3
 pdf('CCET_Wtcga.pdf');
 aa <- migsaHeatmap(CCET_Wtcga_EGS, categories=wtcgaCateg, categLabels=F);
 dev.off();
-
-# save csv
-## Supplementary File 6 EGS
-aux <- aa$data[rownames(aa$data) %in% TCGA_EGS$id,
-                colnames(aa$data) %in% colnames(TCGA_EGS)];
-invisible(toCsv(aux, 'MigsaTCGA_EGS.csv'));
-dim(aux); dim(TCGA_EGS); # CCET was removed for Suppl File
-# [1] 4694   18
-# [1] 4694   19
+## Supplementary File 5 EGSs
+invisible(toCsv(aa$data, 'MigsaTCGA_EGS.csv'));
 
 ## get important genes for tcga enrichments
 library('org.Hs.eg.db');
@@ -189,13 +182,9 @@ migsaTCGAresIEG <- do.call(cbind, lapply(migsaTCGAresIEG, function(actTCGAGenes)
 
 # genesInSets function returns as rownames GS_Name ++ '_' ++ id . So be carefull with this replacement
 rownames(migsaTCGAresIEG) <- sub('.*?_', '', sub('.*?_', '', rownames(migsaTCGAresIEG)));
-migsaTCGAresIEG <- migsaTCGAresIEG[rownames(aux),colnames(aux)];
-stopifnot(all(rownames(aux) == rownames(migsaTCGAresIEG)));
-## Supplementary File 6 IEG
-invisible(toCsv(migsaTCGAresIEG, 'MigsaTCGA_IEG.csv'));
 
 # add CCET_IEG to these genes
-CCET_IEG <- CCETs$IEG;
+CCET_IEG <- CCETs$IEGs;
 colnames(CCET_IEG) <- paste0('C_', colnames(CCET_IEG));
 CCET_IEG <- cbind(id=rownames(CCET_IEG), CCET_IEG);
 migsaTCGAresIEG <- cbind(id=rownames(migsaTCGAresIEG), migsaTCGAresIEG);
@@ -211,6 +200,8 @@ dim(CCET_Wtcga_IEG);
 gs_ids <- CCET_Wtcga_IEG[,1];
 CCET_Wtcga_IEG <- CCET_Wtcga_IEG[,-1];
 rownames(CCET_Wtcga_IEG) <- gs_ids;
+## Supplementary File 5 IEGs
+invisible(toCsv(CCET_Wtcga_IEG[rownames(aa$data), colnames(aa$data)], 'MigsaTCGA_IEG.csv'));
 
 
 # lets intersect for each contrast Microarray and RNA-Seq as TET
@@ -262,12 +253,12 @@ migsaIEG <- migsaIEG[rowSums(migsaEGS, na.rm=!F) > 0,];
 migsaEGS <- migsaEGS[rowSums(migsaEGS, na.rm=!F) > 0,];
 migsaEGS[is.na(migsaEGS)] <- FALSE;
 
-## Supplementary File 7 EGS
-invisible(toCsv(migsaEGS, 'Migsa_EGS.csv'));
+## Supplementary File XX EGS
+# invisible(toCsv(migsaEGS, 'Migsa_EGS.csv'));
 
 
-## Supplementary File 7 IEG
-invisible(toCsv(migsaIEG, 'Migsa_IEG.csv'));
+## Supplementary File XX IEG
+# invisible(toCsv(migsaIEG, 'Migsa_IEG.csv'));
 
 
 # lets do a table for each subtype
@@ -319,11 +310,11 @@ stopifnot(all(rownames(FTP_Wtcga_EGS) == rownames(FTP_Wtcga_IEG)));
 FTP_Wtcga_IEG <- FTP_Wtcga_IEG[rowSums(FTP_Wtcga_EGS, na.rm=!F) > 0,];
 FTP_Wtcga_EGS <- FTP_Wtcga_EGS[rowSums(FTP_Wtcga_EGS, na.rm=!F) > 0,];
 
-## Supplementary File 8 EGS
+## Supplementary File 6 EGS
 invisible(toCsv(FTP_Wtcga_EGS, 'FTP_Wtcga_EGS.csv'));
 
 
-## Supplementary File 8 IEG
+## Supplementary File 6 IEG
 invisible(toCsv(FTP_Wtcga_IEG, 'FTP_Wtcga_IEG.csv'));
 
 
@@ -333,7 +324,7 @@ stypestable <- data.frame(short=subtypes,
                         color=c('#00BFC4', '#7CAE00', '#C77CFF', '#F8766D'));
 rownames(stypestable) <- stypestable$short;
 
-## Supplementary Figs. 12-15
+## Supplementary Figs. 8-11
 pdf("FTP_Wtcga_EGS_venns.pdf");
 byStype <- do.call(rbind, lapply(subtypes, function(actStype) {
 #     actStype <- 'A'; otherStype <- 'H'; acttech <- 'CCET';
@@ -431,7 +422,7 @@ treeFun <- function(dataMatrix) {
     return(res);
 }
 
-## Supplementary Figs. 16-27
+## Supplementary Figs. 12-23
 # actStype <- subtypes[[1]];
 trees <- lapply(subtypes, function(actStype) {
     print(actStype);
